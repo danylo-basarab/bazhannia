@@ -1,4 +1,4 @@
-import type { Column, Item, User, Booking, PublishedWishlist } from "@prisma/client"
+import type { Column, Item, User, Booking, PublishedWishlist } from "../generated/prisma"
 
 export type { Column, Item, User, Booking, PublishedWishlist }
 
