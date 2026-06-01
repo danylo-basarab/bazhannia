@@ -3,7 +3,11 @@ import bcrypt from "bcryptjs"
 import { prisma } from "@/lib/prisma"
 
 export async function POST(req: Request) {
-  const { username, password } = await req.json()
+  const { username, password, registrationCode } = await req.json()
+
+  if (registrationCode !== process.env.REGISTRATION_CODE) {
+    return NextResponse.json({ error: "Invalid registration code" }, { status: 403 })
+  }
 
   if (!username?.trim() || !password?.trim()) {
     return NextResponse.json({ error: "Username and password are required" }, { status: 400 })

@@ -16,6 +16,9 @@ type Translations = {
   loggingIn: string;
   registering: string;
   passwordMinLength: string;
+  registrationCodeLabel: string;
+  registrationCodePlaceholder: string;
+  invalidRegistrationCode: string;
   // board
   addColumn: string;
   addItem: string;
@@ -95,6 +98,9 @@ export const translations: Record<Lang, Translations> = {
     loggingIn: "logging in…",
     registering: "creating…",
     passwordMinLength: "password must be at least 6 characters",
+    registrationCodeLabel: "registration code",
+    registrationCodePlaceholder: "enter code",
+    invalidRegistrationCode: "invalid registration code",
     addColumn: "add column",
     addItem: "add item",
     share: "share",
@@ -175,6 +181,9 @@ export const translations: Record<Lang, Translations> = {
     loggingIn: "вхід…",
     registering: "створення…",
     passwordMinLength: "пароль має містити мінімум 6 символів",
+    registrationCodeLabel: "код реєстрації",
+    registrationCodePlaceholder: "введіть код",
+    invalidRegistrationCode: "невірний код реєстрації",
     addColumn: "додати колонку",
     addItem: "додати бажання",
     share: "поділитися",

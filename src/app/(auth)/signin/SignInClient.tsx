@@ -15,6 +15,7 @@ export function SignInClient() {
   const [tab, setTab] = useState<Tab>("login")
   const [username, setUsername] = useState("")
   const [password, setPassword] = useState("")
+  const [registrationCode, setRegistrationCode] = useState("")
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState("")
 
@@ -47,7 +48,7 @@ export function SignInClient() {
     const res = await fetch("/api/auth/register", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ username: username.trim(), password }),
+      body: JSON.stringify({ username: username.trim(), password, registrationCode }),
     })
     const data = await res.json()
     if (!res.ok) {
@@ -116,6 +117,21 @@ export function SignInClient() {
               required
             />
           </div>
+
+          {tab === "register" && (
+            <div className="space-y-1.5">
+              <Label htmlFor="registration-code">{t.registrationCodeLabel}</Label>
+              <Input
+                id="registration-code"
+                type="password"
+                value={registrationCode}
+                onChange={(e) => setRegistrationCode(e.target.value)}
+                placeholder={t.registrationCodePlaceholder}
+                className="h-11 rounded-2xl"
+                required
+              />
+            </div>
+          )}
 
           {error && <p className="text-sm text-destructive">{error}</p>}
 
