@@ -146,9 +146,9 @@ export function BoardClient({ initialColumns, initialItems, publishedToken, book
       onDragOver={onDragOver}
       onDragEnd={onDragEnd}
     >
-      {/* desktop: horizontal scroll, mobile: vertical stack */}
-      <div className="hidden sm:block overflow-x-auto min-h-full">
-        <div className="flex gap-4 pb-6 pt-2 px-4 items-start w-fit mx-auto">
+      {/* columns: vertical on mobile, horizontal on desktop */}
+      <div className="sm:overflow-x-auto min-h-full">
+        <div className="flex flex-col sm:flex-row gap-4 pb-52 sm:pb-6 pt-2 px-4 sm:items-start sm:w-fit sm:mx-auto">
           {columns.map((col) => (
             <BoardColumn
               key={col.id}
@@ -159,7 +159,7 @@ export function BoardClient({ initialColumns, initialItems, publishedToken, book
               bookingsByItemId={bookingsByItemId}
             />
           ))}
-          <div className="flex flex-col gap-2 flex-shrink-0">
+          <div className="hidden sm:flex flex-col gap-2 flex-shrink-0">
             <Button variant="outline" className="h-10 rounded-2xl border-dashed gap-2 whitespace-nowrap" onClick={() => setAddColOpen(true)}>
               <Plus className="h-4 w-4" /> {t.addColumn}
             </Button>
@@ -171,20 +171,6 @@ export function BoardClient({ initialColumns, initialItems, publishedToken, book
             </Button>
           </div>
         </div>
-      </div>
-
-      {/* mobile: vertical stack */}
-      <div className="sm:hidden flex flex-col gap-4 px-4 pt-2 pb-52">
-        {columns.map((col) => (
-          <BoardColumn
-            key={col.id}
-            column={col}
-            items={items
-              .filter((i) => i.columnId === col.id)
-              .sort((a, b) => a.position - b.position)}
-            bookingsByItemId={bookingsByItemId}
-          />
-        ))}
       </div>
 
       {/* mobile bottom action bar */}
