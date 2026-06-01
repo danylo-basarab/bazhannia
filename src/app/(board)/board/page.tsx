@@ -22,7 +22,7 @@ export default async function BoardPage() {
   ])
 
   const bookingsByItemId = Object.fromEntries(
-    (publishedWishlist?.bookings ?? []).map((b) => [b.itemId, b.bookerName])
+    (publishedWishlist?.bookings ?? []).map((b: { itemId: string; bookerName: string }) => [b.itemId, b.bookerName])
   )
 
   return (
