@@ -146,8 +146,35 @@ export function BoardClient({ initialColumns, initialItems, publishedToken, book
       onDragOver={onDragOver}
       onDragEnd={onDragEnd}
     >
-      <div className="overflow-x-auto min-h-full">
-      <div className="flex gap-4 pb-6 pt-2 px-4 items-start w-fit mx-auto">
+      {/* desktop: horizontal scroll, mobile: vertical stack */}
+      <div className="hidden sm:block overflow-x-auto min-h-full">
+        <div className="flex gap-4 pb-6 pt-2 px-4 items-start w-fit mx-auto">
+          {columns.map((col) => (
+            <BoardColumn
+              key={col.id}
+              column={col}
+              items={items
+                .filter((i) => i.columnId === col.id)
+                .sort((a, b) => a.position - b.position)}
+              bookingsByItemId={bookingsByItemId}
+            />
+          ))}
+          <div className="flex flex-col gap-2 flex-shrink-0">
+            <Button variant="outline" className="h-10 rounded-2xl border-dashed gap-2 whitespace-nowrap" onClick={() => setAddColOpen(true)}>
+              <Plus className="h-4 w-4" /> {t.addColumn}
+            </Button>
+            <Button variant="outline" className="h-10 rounded-2xl border-dashed gap-2 whitespace-nowrap" onClick={() => setAddItemOpen(true)}>
+              <Plus className="h-4 w-4" /> {t.addItem}
+            </Button>
+            <Button variant={publishedToken_ ? "default" : "outline"} className="h-10 rounded-2xl gap-2 whitespace-nowrap" onClick={() => setShareOpen(true)}>
+              <Share2 className="h-4 w-4" /> {publishedToken_ ? t.shared : t.share}
+            </Button>
+          </div>
+        </div>
+      </div>
+
+      {/* mobile: vertical stack */}
+      <div className="sm:hidden flex flex-col gap-4 px-4 pt-2 pb-52">
         {columns.map((col) => (
           <BoardColumn
             key={col.id}
@@ -158,32 +185,19 @@ export function BoardClient({ initialColumns, initialItems, publishedToken, book
             bookingsByItemId={bookingsByItemId}
           />
         ))}
-
-        <div className="flex flex-col gap-2 flex-shrink-0">
-          <Button
-            variant="outline"
-            className="h-10 rounded-2xl border-dashed gap-2 whitespace-nowrap"
-            onClick={() => setAddColOpen(true)}
-          >
-            <Plus className="h-4 w-4" /> {t.addColumn}
-          </Button>
-          <Button
-            variant="outline"
-            className="h-10 rounded-2xl border-dashed gap-2 whitespace-nowrap"
-            onClick={() => setAddItemOpen(true)}
-          >
-            <Plus className="h-4 w-4" /> {t.addItem}
-          </Button>
-          <Button
-            variant={publishedToken_ ? "default" : "outline"}
-            className="h-10 rounded-2xl gap-2 whitespace-nowrap"
-            onClick={() => setShareOpen(true)}
-          >
-            <Share2 className="h-4 w-4" />
-            {publishedToken_ ? t.shared : t.share}
-          </Button>
-        </div>
       </div>
+
+      {/* mobile bottom action bar */}
+      <div className="sm:hidden fixed bottom-0 left-0 right-0 bg-background/90 backdrop-blur-sm border-t border-border/50 flex flex-col gap-2 px-4 py-3 z-30">
+        <Button variant="outline" className="w-full rounded-2xl border-dashed gap-2" onClick={() => setAddItemOpen(true)}>
+          <Plus className="h-4 w-4" /> {t.addItem}
+        </Button>
+        <Button variant="outline" className="w-full rounded-2xl border-dashed gap-2" onClick={() => setAddColOpen(true)}>
+          <Plus className="h-4 w-4" /> {t.addColumn}
+        </Button>
+        <Button variant={publishedToken_ ? "default" : "outline"} className="w-full rounded-2xl gap-2" onClick={() => setShareOpen(true)}>
+          <Share2 className="h-4 w-4" /> {publishedToken_ ? t.shared : t.share}
+        </Button>
       </div>
 
       <DragOverlay activeItem={activeItem} />

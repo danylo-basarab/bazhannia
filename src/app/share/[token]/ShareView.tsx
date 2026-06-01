@@ -77,15 +77,15 @@ export function ShareView({ token, ownerName, initialColumns, initialItems, init
       </header>
 
       <main className="p-4">
-        <div className="overflow-x-auto">
-          <div className="flex gap-4 pb-6 pt-2 items-start w-fit mx-auto">
+        <div className="sm:overflow-x-auto">
+          <div className="flex flex-col sm:flex-row gap-4 pb-6 pt-2 sm:items-start sm:w-fit sm:mx-auto">
             {initialColumns.map((col) => {
               const colItems = initialItems
                 .filter((i) => i.columnId === col.id)
                 .sort((a, b) => a.position - b.position)
 
               return (
-                <div key={col.id} className="flex-shrink-0 w-72">
+                <div key={col.id} className="w-full sm:flex-shrink-0 sm:w-72">
                   <div
                     className="rounded-2xl px-3 py-2 mb-3 flex items-center gap-2"
                     style={{ backgroundColor: col.color + "33" }}

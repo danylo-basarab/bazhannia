@@ -18,7 +18,7 @@ export function BoardColumn({ column, items, bookingsByItemId }: Props) {
   const { t } = useLang()
 
   return (
-    <div className="flex flex-col w-72 flex-shrink-0">
+    <div className="flex flex-col w-full sm:w-72 sm:flex-shrink-0">
       <div
         className="rounded-2xl border border-border/50 bg-card/60 backdrop-blur-sm flex flex-col transition-colors"
         style={{ outline: isOver ? `2px solid ${column.color}` : undefined }}

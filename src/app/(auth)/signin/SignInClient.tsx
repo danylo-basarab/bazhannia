@@ -1,43 +1,61 @@
 "use client"
 
 import { signIn } from "next-auth/react"
-import { useState, useEffect } from "react"
+import { useState } from "react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
+import { Label } from "@/components/ui/label"
 import { Loader2 } from "lucide-react"
 import { useLang } from "@/store/lang-store"
 
-const GUEST_TOKEN_KEY = "wishlist_guest_token"
+type Tab = "login" | "register"
 
 export function SignInClient() {
   const { t, lang, setLang } = useLang()
-  const [name, setName] = useState("")
+  const [tab, setTab] = useState<Tab>("login")
+  const [username, setUsername] = useState("")
+  const [password, setPassword] = useState("")
   const [loading, setLoading] = useState(false)
+  const [error, setError] = useState("")
 
-  useEffect(() => {
-    const stored = localStorage.getItem(GUEST_TOKEN_KEY)
-    if (stored) {
-      setLoading(true)
-      signIn("guest", { guestToken: stored, name: "", callbackUrl: "/board" })
-    }
-  }, [])
-
-  async function handleStart(e: React.FormEvent) {
+  async function handleLogin(e: React.FormEvent) {
     e.preventDefault()
+    setError("")
     setLoading(true)
-    await signIn("guest", {
-      name: name.trim() || "Guest",
-      guestToken: "",
+    const res = await signIn("credentials", {
+      username: username.trim(),
+      password,
       callbackUrl: "/board",
+      redirect: false,
     })
+    if (res?.error) {
+      setError(lang === "uk" ? "Невірне ім'я або пароль" : "Invalid username or password")
+      setLoading(false)
+    } else {
+      window.location.href = "/board"
+    }
   }
 
-  if (loading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-background">
-        <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
-      </div>
-    )
+  async function handleRegister(e: React.FormEvent) {
+    e.preventDefault()
+    setError("")
+    if (password.length < 6) {
+      setError(t.passwordMinLength)
+      return
+    }
+    setLoading(true)
+    const res = await fetch("/api/auth/register", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ username: username.trim(), password }),
+    })
+    const data = await res.json()
+    if (!res.ok) {
+      setError(data.error ?? "Something went wrong")
+      setLoading(false)
+      return
+    }
+    await signIn("credentials", { username: username.trim(), password, callbackUrl: "/board" })
   }
 
   return (
@@ -58,22 +76,56 @@ export function SignInClient() {
           <p className="text-muted-foreground text-sm">{t.appSubtitle}</p>
         </div>
 
-        <form onSubmit={handleStart} className="space-y-3">
-          <Input
-            placeholder={t.namePlaceholder}
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-            className="h-12 rounded-2xl text-sm"
-            autoFocus
-          />
-          <Button type="submit" className="w-full rounded-2xl h-12 text-sm font-medium">
-            {t.startButton}
+        <div className="flex rounded-2xl bg-muted p-1 gap-1">
+          {(["login", "register"] as Tab[]).map((t2) => (
+            <button
+              key={t2}
+              type="button"
+              onClick={() => { setTab(t2); setError("") }}
+              className={`flex-1 py-2 text-sm font-medium rounded-xl transition-colors ${
+                tab === t2 ? "bg-background shadow-sm" : "text-muted-foreground hover:text-foreground"
+              }`}
+            >
+              {t2 === "login" ? t.loginTab : t.registerTab}
+            </button>
+          ))}
+        </div>
+
+        <form onSubmit={tab === "login" ? handleLogin : handleRegister} className="space-y-4">
+          <div className="space-y-1.5">
+            <Label htmlFor="username">{t.usernameLabel}</Label>
+            <Input
+              id="username"
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
+              placeholder={t.usernamePlaceholder}
+              className="h-11 rounded-2xl"
+              autoFocus
+              required
+            />
+          </div>
+          <div className="space-y-1.5">
+            <Label htmlFor="password">{t.passwordLabel}</Label>
+            <Input
+              id="password"
+              type="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              placeholder={t.passwordPlaceholder}
+              className="h-11 rounded-2xl"
+              required
+            />
+          </div>
+
+          {error && <p className="text-sm text-destructive">{error}</p>}
+
+          <Button type="submit" className="w-full h-11 rounded-2xl font-medium" disabled={loading}>
+            {loading
+              ? <Loader2 className="h-4 w-4 animate-spin" />
+              : tab === "login" ? t.loginButton : t.registerButton
+            }
           </Button>
         </form>
-
-        <div className="w-full rounded-2xl bg-yellow-50 border border-yellow-200 px-4 py-3 text-xs text-yellow-800 dark:bg-yellow-950/40 dark:border-yellow-800/50 dark:text-yellow-300">
-          {t.signInFooter}
-        </div>
       </div>
     </div>
   )
