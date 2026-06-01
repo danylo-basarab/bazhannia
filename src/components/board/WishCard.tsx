@@ -107,24 +107,16 @@ export function WishCard({ item, overlay = false, bookedBy = null }: Props) {
             onPointerDown={(e) => e.stopPropagation()}
           >
             <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button
-                  size="icon"
-                  variant="secondary"
-                  className="h-7 w-7 rounded-full shadow-sm"
-                >
-                  <MoreHorizontal className="h-3.5 w-3.5" />
-                </Button>
+              <DropdownMenuTrigger className="inline-flex items-center justify-center h-7 w-7 rounded-full bg-secondary shadow-sm hover:bg-secondary/80 transition-colors">
+                <MoreHorizontal className="h-3.5 w-3.5" />
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end">
                 <DropdownMenuItem onClick={() => setEditOpen(true)}>
                   <Pencil className="h-3.5 w-3.5 mr-2" /> {t.edit}
                 </DropdownMenuItem>
                 {item.imageUrl && (
-                  <DropdownMenuItem asChild>
-                    <a href={item.imageUrl} target="_blank" rel="noopener noreferrer">
-                      <ExternalLink className="h-3.5 w-3.5 mr-2" /> {t.openImage}
-                    </a>
+                  <DropdownMenuItem onClick={() => window.open(item.imageUrl!, "_blank", "noopener,noreferrer")}>
+                    <ExternalLink className="h-3.5 w-3.5 mr-2" /> {t.openImage}
                   </DropdownMenuItem>
                 )}
                 <DropdownMenuItem
