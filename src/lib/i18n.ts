@@ -62,6 +62,9 @@ type Translations = {
   shareLinkDesc: string;
   unpublish: string;
   unpublishing: string;
+  // background
+  setBackground: string;
+  backgroundImageUrl: string;
   // ShareView
   iWillGift: string;
   bookTitle: (name: string) => string;
@@ -142,6 +145,8 @@ export const translations: Record<Lang, Translations> = {
       "share this link with friends so they can see your wishlist and book gifts.",
     unpublish: "unpublish",
     unpublishing: "unpublishing…",
+    setBackground: "set background",
+    backgroundImageUrl: "background image url",
     iWillGift: "i'll gift this",
     bookTitle: (name) => `book "${name}"`,
     bookDesc:
@@ -226,6 +231,8 @@ export const translations: Record<Lang, Translations> = {
       "поділіться цим посиланням з друзями, щоб вони побачили ваш список.",
     unpublish: "приховати",
     unpublishing: "приховання…",
+    setBackground: "фонове зображення",
+    backgroundImageUrl: "посилання на фон",
     iWillGift: "я подарую це",
     bookTitle: (name) => `забронювати «${name}»`,
     bookDesc:

@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { Gift, ShoppingBag } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import {
@@ -31,6 +31,19 @@ export function ShareView({ token, ownerName, initialColumns, initialItems, init
   const [bookerName, setBookerName] = useState("")
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState("")
+  const [backgroundImageUrl, setBackgroundImageUrl] = useState<string | null>(null)
+
+  useEffect(() => {
+    const syncBackground = () => {
+      if (typeof window === "undefined") return
+      const stored = window.localStorage.getItem("bazhannia-bg-url")
+      setBackgroundImageUrl(stored && stored.trim() ? stored.trim() : null)
+    }
+
+    syncBackground()
+    window.addEventListener("bazhannia:bg-change", syncBackground)
+    return () => window.removeEventListener("bazhannia:bg-change", syncBackground)
+  }, [])
 
   function getBooking(itemId: string) {
     return bookings.find((b) => b.itemId === itemId)
@@ -61,7 +74,19 @@ export function ShareView({ token, ownerName, initialColumns, initialItems, init
   }
 
   return (
-    <div className="min-h-screen bg-background">
+    <div
+      className="min-h-screen bg-background"
+      style={
+        backgroundImageUrl
+          ? {
+              backgroundImage: `url(${backgroundImageUrl})`,
+              backgroundSize: "cover",
+              backgroundPosition: "center",
+              backgroundAttachment: "fixed",
+            }
+          : undefined
+      }
+    >
       <header className="h-14 border-b border-border/50 bg-background/80 backdrop-blur-sm sticky top-0 z-40 flex items-center px-4 gap-3">
         <span className="font-bold tracking-tight text-base">{t.appName}</span>
         {ownerName && (
@@ -99,10 +124,16 @@ export function ShareView({ token, ownerName, initialColumns, initialItems, init
                     {colItems.map((item) => {
                       const booking = getBooking(item.id)
                       return (
-                        <div key={item.id} className="bg-card rounded-2xl overflow-hidden shadow-sm">
+                        <div key={item.id} className="max-h-[420px] bg-card rounded-2xl overflow-hidden shadow-sm">
                           {item.imageUrl && (
-                            // eslint-disable-next-line @next/next/no-img-element
-                            <img src={item.imageUrl} alt={item.name} className="w-full object-cover" />
+                            <div className="w-full max-h-52 overflow-hidden bg-muted/20 flex items-center justify-center">
+                              {/* eslint-disable-next-line @next/next/no-img-element */}
+                              <img
+                                src={item.imageUrl}
+                                alt={item.name}
+                                className="block w-full h-auto max-h-52 object-contain"
+                              />
+                            </div>
                           )}
                           <div className="p-3 space-y-1.5">
                             <p className="font-medium text-sm leading-snug line-clamp-2">{item.name}</p>
@@ -127,8 +158,8 @@ export function ShareView({ token, ownerName, initialColumns, initialItems, init
                             )}
                             <div className="pt-1">
                               {booking ? (
-                                <div className="flex items-center gap-1.5 text-xs text-muted-foreground bg-muted/60 rounded-lg px-2.5 py-1.5">
-                                  <Gift className="h-3 w-3 flex-shrink-0" />
+                                <div className="flex items-center gap-1.5 text-xs font-medium text-rose-700 dark:text-rose-200 bg-rose-500/10 border border-rose-500/30 rounded-lg px-2.5 py-1.5 shadow-sm">
+                                  <Gift className="h-3.5 w-3.5 flex-shrink-0" />
                                   <span>{t.bookedBy} <strong>{booking.bookerName}</strong></span>
                                 </div>
                               ) : (

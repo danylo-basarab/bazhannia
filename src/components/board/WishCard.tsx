@@ -95,8 +95,8 @@ export function WishCard({ item, overlay = false, bookedBy = null }: Props) {
             <p className="text-xs text-muted-foreground line-clamp-2">{item.notes}</p>
           )}
           {bookedBy && (
-            <div className="flex items-center gap-1.5 text-xs text-muted-foreground bg-muted/60 rounded-lg px-2 py-1">
-              <Gift className="h-3 w-3 flex-shrink-0" />
+            <div className="flex items-center gap-1.5 text-xs font-medium text-rose-700 dark:text-rose-200 bg-rose-500/10 border border-rose-500/30 rounded-lg px-2.5 py-1.5 shadow-sm">
+              <Gift className="h-3.5 w-3.5 flex-shrink-0" />
               <span>{t.bookedBy} <strong>{bookedBy}</strong></span>
             </div>
           )}

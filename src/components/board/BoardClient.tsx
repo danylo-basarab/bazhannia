@@ -42,6 +42,19 @@ export function BoardClient({ initialColumns, initialItems, publishedToken, book
   const [shareOpen, setShareOpen] = useState(false)
   const [publishedToken_, setPublishedToken] = useState<string | null>(publishedToken)
   const [selectedCategory, setSelectedCategory] = useState<string>("all")
+  const [backgroundImageUrl, setBackgroundImageUrl] = useState<string | null>(null)
+
+  useEffect(() => {
+    const syncBackground = () => {
+      if (typeof window === "undefined") return
+      const stored = window.localStorage.getItem("bazhannia-bg-url")
+      setBackgroundImageUrl(stored && stored.trim() ? stored.trim() : null)
+    }
+
+    syncBackground()
+    window.addEventListener("bazhannia:bg-change", syncBackground)
+    return () => window.removeEventListener("bazhannia:bg-change", syncBackground)
+  }, [])
 
   useEffect(() => {
     if (!initialized.current) {
@@ -183,90 +196,102 @@ export function BoardClient({ initialColumns, initialItems, publishedToken, book
       onDragOver={onDragOver}
       onDragEnd={onDragEnd}
     >
-      <div className="px-4 pt-4 pb-2">
-        <div className="flex flex-wrap items-center gap-2 rounded-2xl border border-border/60 bg-card/60 p-2 backdrop-blur-sm">
-          <Button
-            type="button"
-            variant={selectedCategory === "all" ? "default" : "outline"}
-            size="sm"
-            className="rounded-full"
-            onClick={() => setSelectedCategory("all")}
-          >
-            All
-          </Button>
-          {categories.map((category) => {
-            const active = selectedCategory.toLowerCase() === category.toLowerCase()
+      <div
+        className="min-h-screen"
+        style={
+          backgroundImageUrl
+            ? {
+                backgroundImage: `url(${backgroundImageUrl})`,
+                backgroundSize: "cover",
+                backgroundPosition: "center",
+                backgroundAttachment: "fixed",
+              }
+            : undefined
+        }
+      >
+        <div className="px-4 pt-4 pb-2">
+          <div className="flex flex-wrap items-center gap-2 rounded-2xl border border-border/60 bg-card/60 p-2 backdrop-blur-sm">
+            <Button
+              type="button"
+              variant={selectedCategory === "all" ? "default" : "outline"}
+              size="sm"
+              className="rounded-full"
+              onClick={() => setSelectedCategory("all")}
+            >
+              All
+            </Button>
+            {categories.map((category) => {
+              const active = selectedCategory.toLowerCase() === category.toLowerCase()
 
-            return (
-              <Button
-                key={category}
-                type="button"
-                size="sm"
-                className={`rounded-full ${getCategoryClasses(category, active)}`}
-                onClick={() => setSelectedCategory(category)}
-              >
-                {category}
-              </Button>
-            )
-          })}
-        </div>
-      </div>
-
-      {/* columns: vertical on mobile, horizontal on desktop */}
-      <div className="sm:overflow-x-auto min-h-full">
-        <div className="flex flex-col sm:flex-row gap-4 pb-52 sm:pb-6 pt-2 px-4 sm:items-start sm:w-fit sm:mx-auto">
-          {columns.map((col) => (
-            <BoardColumn
-              key={col.id}
-              column={col}
-              items={filteredItems
-                .filter((i) => i.columnId === col.id)
-                .sort((a, b) => a.position - b.position)}
-              bookingsByItemId={bookingsByItemId}
-            />
-          ))}
-          <div className="hidden sm:flex flex-col gap-2 flex-shrink-0">
-            <Button variant="outline" className="h-10 rounded-2xl border-dashed gap-2 whitespace-nowrap" onClick={() => setAddColOpen(true)}>
-              <Plus className="h-4 w-4" /> {t.addColumn}
-            </Button>
-            <Button variant="outline" className="h-10 rounded-2xl border-dashed gap-2 whitespace-nowrap" onClick={() => setAddItemOpen(true)}>
-              <Plus className="h-4 w-4" /> {t.addItem}
-            </Button>
-            <Button variant={publishedToken_ ? "default" : "outline"} className="h-10 rounded-2xl gap-2 whitespace-nowrap" onClick={() => setShareOpen(true)}>
-              <Share2 className="h-4 w-4" /> {publishedToken_ ? t.shared : t.share}
-            </Button>
+              return (
+                <Button
+                  key={category}
+                  type="button"
+                  size="sm"
+                  className={`rounded-full ${getCategoryClasses(category, active)}`}
+                  onClick={() => setSelectedCategory(category)}
+                >
+                  {category}
+                </Button>
+              )
+            })}
           </div>
         </div>
+
+        <div className="sm:overflow-x-auto min-h-full">
+          <div className="flex flex-col sm:flex-row gap-4 pb-52 sm:pb-6 pt-2 px-4 sm:items-start sm:w-fit sm:mx-auto">
+            {columns.map((col) => (
+              <BoardColumn
+                key={col.id}
+                column={col}
+                items={filteredItems
+                  .filter((i) => i.columnId === col.id)
+                  .sort((a, b) => a.position - b.position)}
+                bookingsByItemId={bookingsByItemId}
+              />
+            ))}
+            <div className="hidden sm:flex flex-col gap-2 flex-shrink-0">
+              <Button variant="outline" className="h-10 rounded-2xl border-dashed gap-2 whitespace-nowrap" onClick={() => setAddColOpen(true)}>
+                <Plus className="h-4 w-4" /> {t.addColumn}
+              </Button>
+              <Button variant="outline" className="h-10 rounded-2xl border-dashed gap-2 whitespace-nowrap" onClick={() => setAddItemOpen(true)}>
+                <Plus className="h-4 w-4" /> {t.addItem}
+              </Button>
+              <Button variant={publishedToken_ ? "default" : "outline"} className="h-10 rounded-2xl gap-2 whitespace-nowrap" onClick={() => setShareOpen(true)}>
+                <Share2 className="h-4 w-4" /> {publishedToken_ ? t.shared : t.share}
+              </Button>
+            </div>
+          </div>
+        </div>
+
+        <div className="sm:hidden fixed bottom-0 left-0 right-0 bg-background/90 backdrop-blur-sm border-t border-border/50 flex flex-col gap-2 px-4 py-3 z-30">
+          <Button variant="outline" className="w-full rounded-2xl border-dashed gap-2" onClick={() => setAddItemOpen(true)}>
+            <Plus className="h-4 w-4" /> {t.addItem}
+          </Button>
+          <Button variant="outline" className="w-full rounded-2xl border-dashed gap-2" onClick={() => setAddColOpen(true)}>
+            <Plus className="h-4 w-4" /> {t.addColumn}
+          </Button>
+          <Button variant={publishedToken_ ? "default" : "outline"} className="w-full rounded-2xl gap-2" onClick={() => setShareOpen(true)}>
+            <Share2 className="h-4 w-4" /> {publishedToken_ ? t.shared : t.share}
+          </Button>
+        </div>
+
+        <DragOverlay activeItem={activeItem} />
+
+        <AddItemDialog
+          open={addItemOpen}
+          onClose={() => setAddItemOpen(false)}
+          defaultColumnId={columns[0]?.id}
+        />
+        <AddColumnDialog open={addColOpen} onClose={() => setAddColOpen(false)} />
+        <ShareDialog
+          open={shareOpen}
+          onClose={() => setShareOpen(false)}
+          published={publishedToken_ ? { token: publishedToken_ } : null}
+          onPublish={(token) => setPublishedToken(token)}
+          onUnpublish={() => setPublishedToken(null)}
+        />
       </div>
-
-      {/* mobile bottom action bar */}
-      <div className="sm:hidden fixed bottom-0 left-0 right-0 bg-background/90 backdrop-blur-sm border-t border-border/50 flex flex-col gap-2 px-4 py-3 z-30">
-        <Button variant="outline" className="w-full rounded-2xl border-dashed gap-2" onClick={() => setAddItemOpen(true)}>
-          <Plus className="h-4 w-4" /> {t.addItem}
-        </Button>
-        <Button variant="outline" className="w-full rounded-2xl border-dashed gap-2" onClick={() => setAddColOpen(true)}>
-          <Plus className="h-4 w-4" /> {t.addColumn}
-        </Button>
-        <Button variant={publishedToken_ ? "default" : "outline"} className="w-full rounded-2xl gap-2" onClick={() => setShareOpen(true)}>
-          <Share2 className="h-4 w-4" /> {publishedToken_ ? t.shared : t.share}
-        </Button>
-      </div>
-
-      <DragOverlay activeItem={activeItem} />
-
-      <AddItemDialog
-        open={addItemOpen}
-        onClose={() => setAddItemOpen(false)}
-        defaultColumnId={columns[0]?.id}
-      />
-      <AddColumnDialog open={addColOpen} onClose={() => setAddColOpen(false)} />
-      <ShareDialog
-        open={shareOpen}
-        onClose={() => setShareOpen(false)}
-        published={publishedToken_ ? { token: publishedToken_ } : null}
-        onPublish={(token) => setPublishedToken(token)}
-        onUnpublish={() => setPublishedToken(null)}
-      />
     </DndContext>
   )
 }
