@@ -108,7 +108,7 @@ export function ShareView({ token, ownerName, initialColumns, initialItems, init
                             <p className="font-medium text-sm leading-snug line-clamp-2">{item.name}</p>
                             <div className="flex items-center justify-between gap-2">
                               {item.price != null && (
-                                <span className="font-semibold text-sm">{formatPrice(item.price)}</span>
+                                <span className="font-semibold text-sm">{formatPrice(item.price, lang)}</span>
                               )}
                               {item.category && (
                                 <span

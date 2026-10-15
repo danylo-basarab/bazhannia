@@ -25,7 +25,7 @@ interface Props {
 }
 
 export function AddItemDialog({ open, onClose, defaultColumnId, item }: Props) {
-  const { columns, addItem, updateItem } = useBoardStore()
+  const { columns, items, addItem, updateItem } = useBoardStore()
   const { t } = useLang()
   const [name, setName] = useState("")
   const [imageUrl, setImageUrl] = useState("")
@@ -34,6 +34,15 @@ export function AddItemDialog({ open, onClose, defaultColumnId, item }: Props) {
   const [notes, setNotes] = useState("")
   const [columnId, setColumnId] = useState<string>(defaultColumnId ?? "")
   const [loading, setLoading] = useState(false)
+
+  const categoryOptions = Array.from(
+    new Set([
+      ...items
+        .map((entry) => entry.category?.trim())
+        .filter((category): category is string => Boolean(category)),
+      ...t.categorySuggestions,
+    ])
+  )
 
   useEffect(() => {
     if (open) {
@@ -151,7 +160,7 @@ export function AddItemDialog({ open, onClose, defaultColumnId, item }: Props) {
                 list="category-suggestions"
               />
               <datalist id="category-suggestions">
-                {t.categorySuggestions.map((s) => <option key={s} value={s} />)}
+                {categoryOptions.map((s) => <option key={s} value={s} />)}
               </datalist>
             </div>
           </div>

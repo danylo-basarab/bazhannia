@@ -1,18 +1,20 @@
 import { clsx, type ClassValue } from "clsx"
 import { twMerge } from "tailwind-merge"
+import type { Lang } from "@/lib/i18n"
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
 }
 
-export function formatPrice(price: number | null | undefined): string {
+export function formatPrice(price: number | null | undefined, lang: Lang = "en"): string {
   if (price == null) return ""
-  return new Intl.NumberFormat("en-US", {
-    style: "currency",
-    currency: "USD",
+
+  const formatted = new Intl.NumberFormat(lang === "uk" ? "uk-UA" : "en-US", {
     minimumFractionDigits: 0,
     maximumFractionDigits: 2,
   }).format(price)
+
+  return lang === "uk" ? `${formatted} грн` : `${formatted} UAH`
 }
 
 export function categoryColor(category: string | null | undefined): string {

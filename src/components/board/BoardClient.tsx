@@ -68,6 +68,26 @@ export function BoardClient({ initialColumns, initialItems, publishedToken, book
     return items.filter((item) => item.category?.trim().toLowerCase() === selectedCategory.toLowerCase())
   }, [items, selectedCategory])
 
+  const categoryPalette = [
+    "border-pink-400/60 bg-pink-500/10 text-pink-200 hover:bg-pink-500/15",
+    "border-violet-400/60 bg-violet-500/10 text-violet-200 hover:bg-violet-500/15",
+    "border-cyan-400/60 bg-cyan-500/10 text-cyan-200 hover:bg-cyan-500/15",
+    "border-emerald-400/60 bg-emerald-500/10 text-emerald-200 hover:bg-emerald-500/15",
+    "border-amber-400/60 bg-amber-500/10 text-amber-200 hover:bg-amber-500/15",
+    "border-rose-400/60 bg-rose-500/10 text-rose-200 hover:bg-rose-500/15",
+    "border-sky-400/60 bg-sky-500/10 text-sky-200 hover:bg-sky-500/15",
+    "border-fuchsia-400/60 bg-fuchsia-500/10 text-fuchsia-200 hover:bg-fuchsia-500/15",
+  ]
+
+  function getCategoryClasses(category: string, active: boolean) {
+    const paletteIndex = [...category].reduce((acc, char) => acc + char.charCodeAt(0), 0) % categoryPalette.length
+    const base = categoryPalette[paletteIndex]
+
+    if (!active) return `border ${base}`
+
+    return `border ${base.replace("/10", "/20").replace("/15", "/25")} shadow-[0_0_0_1px_rgba(255,255,255,0.08)]`
+  }
+
   const sensors = useSensors(
     useSensor(PointerSensor, { activationConstraint: { distance: 5 } })
   )
@@ -176,18 +196,21 @@ export function BoardClient({ initialColumns, initialItems, publishedToken, book
           >
             All
           </Button>
-          {categories.map((category) => (
-            <Button
-              key={category}
-              type="button"
-              variant={selectedCategory.toLowerCase() === category.toLowerCase() ? "default" : "outline"}
-              size="sm"
-              className="rounded-full"
-              onClick={() => setSelectedCategory(category)}
-            >
-              {category}
-            </Button>
-          ))}
+          {categories.map((category) => {
+            const active = selectedCategory.toLowerCase() === category.toLowerCase()
+
+            return (
+              <Button
+                key={category}
+                type="button"
+                size="sm"
+                className={`rounded-full ${getCategoryClasses(category, active)}`}
+                onClick={() => setSelectedCategory(category)}
+              >
+                {category}
+              </Button>
+            )
+          })}
         </div>
       </div>
 

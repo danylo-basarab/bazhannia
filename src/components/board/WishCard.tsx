@@ -25,7 +25,7 @@ interface Props {
 
 export function WishCard({ item, overlay = false, bookedBy = null }: Props) {
   const { removeItem } = useBoardStore()
-  const { t } = useLang()
+  const { t, lang } = useLang()
   const [editOpen, setEditOpen] = useState(false)
 
   const {
@@ -74,7 +74,7 @@ export function WishCard({ item, overlay = false, bookedBy = null }: Props) {
           <div className="flex items-center justify-between gap-2">
             {item.price != null && (
               <span className="font-semibold text-sm text-foreground">
-                {formatPrice(item.price)}
+                {formatPrice(item.price, lang)}
               </span>
             )}
             {item.category && (
