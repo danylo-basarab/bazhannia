@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect, useRef, useState } from "react"
+import { useEffect, useMemo, useRef, useState } from "react"
 import {
   DndContext,
   PointerSensor,
@@ -41,6 +41,7 @@ export function BoardClient({ initialColumns, initialItems, publishedToken, book
   const [addColOpen, setAddColOpen] = useState(false)
   const [shareOpen, setShareOpen] = useState(false)
   const [publishedToken_, setPublishedToken] = useState<string | null>(publishedToken)
+  const [selectedCategory, setSelectedCategory] = useState<string>("all")
 
   useEffect(() => {
     if (!initialized.current) {
@@ -48,6 +49,24 @@ export function BoardClient({ initialColumns, initialItems, publishedToken, book
       initialized.current = true
     }
   }, [initialColumns, initialItems, setBoard])
+
+  const categories = useMemo(() => {
+    const normalized = new Map<string, string>()
+
+    items.forEach((item) => {
+      const category = item.category?.trim()
+      if (!category) return
+      const key = category.toLowerCase()
+      if (!normalized.has(key)) normalized.set(key, category)
+    })
+
+    return Array.from(normalized.values())
+  }, [items])
+
+  const filteredItems = useMemo(() => {
+    if (selectedCategory === "all") return items
+    return items.filter((item) => item.category?.trim().toLowerCase() === selectedCategory.toLowerCase())
+  }, [items, selectedCategory])
 
   const sensors = useSensors(
     useSensor(PointerSensor, { activationConstraint: { distance: 5 } })
@@ -146,6 +165,32 @@ export function BoardClient({ initialColumns, initialItems, publishedToken, book
       onDragOver={onDragOver}
       onDragEnd={onDragEnd}
     >
+      <div className="px-4 pt-4 pb-2">
+        <div className="flex flex-wrap items-center gap-2 rounded-2xl border border-border/60 bg-card/60 p-2 backdrop-blur-sm">
+          <Button
+            type="button"
+            variant={selectedCategory === "all" ? "default" : "outline"}
+            size="sm"
+            className="rounded-full"
+            onClick={() => setSelectedCategory("all")}
+          >
+            All
+          </Button>
+          {categories.map((category) => (
+            <Button
+              key={category}
+              type="button"
+              variant={selectedCategory.toLowerCase() === category.toLowerCase() ? "default" : "outline"}
+              size="sm"
+              className="rounded-full"
+              onClick={() => setSelectedCategory(category)}
+            >
+              {category}
+            </Button>
+          ))}
+        </div>
+      </div>
+
       {/* columns: vertical on mobile, horizontal on desktop */}
       <div className="sm:overflow-x-auto min-h-full">
         <div className="flex flex-col sm:flex-row gap-4 pb-52 sm:pb-6 pt-2 px-4 sm:items-start sm:w-fit sm:mx-auto">
@@ -153,7 +198,7 @@ export function BoardClient({ initialColumns, initialItems, publishedToken, book
             <BoardColumn
               key={col.id}
               column={col}
-              items={items
+              items={filteredItems
                 .filter((i) => i.columnId === col.id)
                 .sort((a, b) => a.position - b.position)}
               bookingsByItemId={bookingsByItemId}

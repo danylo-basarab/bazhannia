@@ -74,6 +74,7 @@ type Translations = {
   // Theme
   themeLight: string;
   themeDark: string;
+  themePink: string;
   // Default columns
   colWant: string;
   colPlanned: string;
@@ -152,6 +153,7 @@ export const translations: Record<Lang, Translations> = {
     ownerWishlist: (name) => `— ${name}'s wishlist`,
     themeLight: "light",
     themeDark: "dark",
+    themePink: "pink",
     colWant: "want",
     colPlanned: "planned",
     colHave: "have",
@@ -235,6 +237,7 @@ export const translations: Record<Lang, Translations> = {
     ownerWishlist: (name) => `— список бажань ${name}`,
     themeLight: "світла",
     themeDark: "темна",
+    themePink: "рожевий",
     colWant: "хочу",
     colPlanned: "планую",
     colHave: "маю",
