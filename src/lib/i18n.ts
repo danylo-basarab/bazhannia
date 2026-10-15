@@ -237,7 +237,7 @@ export const translations: Record<Lang, Translations> = {
     ownerWishlist: (name) => `— список бажань ${name}`,
     themeLight: "світла",
     themeDark: "темна",
-    themePink: "рожевий",
+    themePink: "рожева (для Яни <3)",
     colWant: "хочу",
     colPlanned: "планую",
     colHave: "маю",

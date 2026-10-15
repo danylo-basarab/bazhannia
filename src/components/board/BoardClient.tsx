@@ -69,23 +69,21 @@ export function BoardClient({ initialColumns, initialItems, publishedToken, book
   }, [items, selectedCategory])
 
   const categoryPalette = [
-    "border-pink-400/60 bg-pink-500/10 text-pink-200 hover:bg-pink-500/15",
-    "border-violet-400/60 bg-violet-500/10 text-violet-200 hover:bg-violet-500/15",
-    "border-cyan-400/60 bg-cyan-500/10 text-cyan-200 hover:bg-cyan-500/15",
-    "border-emerald-400/60 bg-emerald-500/10 text-emerald-200 hover:bg-emerald-500/15",
-    "border-amber-400/60 bg-amber-500/10 text-amber-200 hover:bg-amber-500/15",
-    "border-rose-400/60 bg-rose-500/10 text-rose-200 hover:bg-rose-500/15",
-    "border-sky-400/60 bg-sky-500/10 text-sky-200 hover:bg-sky-500/15",
-    "border-fuchsia-400/60 bg-fuchsia-500/10 text-fuchsia-200 hover:bg-fuchsia-500/15",
+    { inactive: "border-pink-500/60 bg-pink-500/10 text-pink-700 dark:text-pink-200 hover:bg-pink-500/15", active: "border-pink-500 bg-pink-500 text-white shadow-[0_0_0_2px_rgba(236,72,153,0.25)] hover:bg-pink-600" },
+    { inactive: "border-violet-500/60 bg-violet-500/10 text-violet-700 dark:text-violet-200 hover:bg-violet-500/15", active: "border-violet-500 bg-violet-500 text-white shadow-[0_0_0_2px_rgba(139,92,246,0.25)] hover:bg-violet-600" },
+    { inactive: "border-cyan-500/60 bg-cyan-500/10 text-cyan-700 dark:text-cyan-200 hover:bg-cyan-500/15", active: "border-cyan-500 bg-cyan-500 text-white shadow-[0_0_0_2px_rgba(6,182,212,0.25)] hover:bg-cyan-600" },
+    { inactive: "border-emerald-500/60 bg-emerald-500/10 text-emerald-700 dark:text-emerald-200 hover:bg-emerald-500/15", active: "border-emerald-500 bg-emerald-500 text-white shadow-[0_0_0_2px_rgba(16,185,129,0.25)] hover:bg-emerald-600" },
+    { inactive: "border-amber-500/60 bg-amber-500/10 text-amber-700 dark:text-amber-200 hover:bg-amber-500/15", active: "border-amber-500 bg-amber-500 text-white shadow-[0_0_0_2px_rgba(245,158,11,0.25)] hover:bg-amber-600" },
+    { inactive: "border-rose-500/60 bg-rose-500/10 text-rose-700 dark:text-rose-200 hover:bg-rose-500/15", active: "border-rose-500 bg-rose-500 text-white shadow-[0_0_0_2px_rgba(244,63,94,0.25)] hover:bg-rose-600" },
+    { inactive: "border-sky-500/60 bg-sky-500/10 text-sky-700 dark:text-sky-200 hover:bg-sky-500/15", active: "border-sky-500 bg-sky-500 text-white shadow-[0_0_0_2px_rgba(14,165,233,0.25)] hover:bg-sky-600" },
+    { inactive: "border-fuchsia-500/60 bg-fuchsia-500/10 text-fuchsia-700 dark:text-fuchsia-200 hover:bg-fuchsia-500/15", active: "border-fuchsia-500 bg-fuchsia-500 text-white shadow-[0_0_0_2px_rgba(217,70,239,0.25)] hover:bg-fuchsia-600" },
   ]
 
   function getCategoryClasses(category: string, active: boolean) {
     const paletteIndex = [...category].reduce((acc, char) => acc + char.charCodeAt(0), 0) % categoryPalette.length
-    const base = categoryPalette[paletteIndex]
+    const palette = categoryPalette[paletteIndex]
 
-    if (!active) return `border ${base}`
-
-    return `border ${base.replace("/10", "/20").replace("/15", "/25")} shadow-[0_0_0_1px_rgba(255,255,255,0.08)]`
+    return active ? `border-2 ${palette.active}` : `border ${palette.inactive}`
   }
 
   const sensors = useSensors(

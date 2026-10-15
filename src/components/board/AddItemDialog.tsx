@@ -99,7 +99,7 @@ export function AddItemDialog({ open, onClose, defaultColumnId, item }: Props) {
 
   return (
     <Dialog open={open} onOpenChange={(v) => !v && onClose()}>
-      <DialogContent className="sm:max-w-md">
+      <DialogContent className="sm:max-w-md max-h-[85vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle>{item ? t.editItem : t.addToWishlist}</DialogTitle>
         </DialogHeader>
