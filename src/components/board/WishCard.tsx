@@ -55,17 +55,18 @@ export function WishCard({ item, overlay = false, bookedBy = null }: Props) {
         style={style}
         {...attributes}
         {...listeners}
-        className={`group relative bg-card rounded-2xl overflow-hidden shadow-sm hover:shadow-md transition-all cursor-grab active:cursor-grabbing select-none ${overlay ? "rotate-2 shadow-xl" : ""}`}
+        className={`group relative max-h-[420px] bg-card rounded-2xl overflow-hidden shadow-sm hover:shadow-md transition-all cursor-grab active:cursor-grabbing select-none ${overlay ? "rotate-2 shadow-xl" : ""}`}
       >
         {item.imageUrl && (
-          // eslint-disable-next-line @next/next/no-img-element
-          <img
-            src={item.imageUrl}
-            alt={item.name}
-            className="w-full object-cover"
-            style={{ display: "block" }}
-            onError={(e) => e.currentTarget.parentElement?.classList.add("no-img")}
-          />
+          <div className="w-full max-h-52 overflow-hidden bg-muted/20 flex items-center justify-center">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src={item.imageUrl}
+              alt={item.name}
+              className="block w-full h-auto max-h-52 object-contain"
+              onError={(e) => e.currentTarget.parentElement?.classList.add("hidden")}
+            />
+          </div>
         )}
 
         <div className="p-3 space-y-1.5">
