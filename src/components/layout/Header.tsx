@@ -25,7 +25,7 @@ export function Header() {
         onClick={() => setLang(lang === "uk" ? "en" : "uk")}
         className="text-xs text-muted-foreground hover:text-foreground transition-colors px-2 py-1 rounded-lg hover:bg-muted"
       >
-        {lang === "uk" ? "EN" : "УК"}
+        {lang === "uk" ? "to ENG" : " to UKR"}
       </button>
 
       <ThemeToggle />
